@@ -6,23 +6,21 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 360 # 6 saat sürer
+    timeout-minutes: 360 # Maksimum 6 saat açık kalır
     steps:
       - name: RDP ve Kullanıcı Ayarları
         run: |
-          # Yönetici şifresini belirle
-          net user administrator VdsPassword123!
+          # Yönetici şifresini admin1234 olarak belirle
+          net user administrator admin1234
           
           # RDP'yi etkinleştir
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           
-          # NLA (Network Level Authentication) devre dışı bırak (bağlantı hatasını önlemek için)
+          # NLA (Network Level Authentication) devre dışı bırak (bağlantı hatalarını önler)
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 0
 
       - name: Pinggy ile Tünel Başlat
         run: |
-          echo "Pinggy tüneli başlatılıyor... Lütfen log kısmından adresi takip edin."
-          # Tüneli arka planda başlatmak için bir loop veya arka plan süreci kullanıyoruz
+          echo "Pinggy tüneli başlatılıyor... Lütfen loglardan 'tcp://...' ile başlayan adresi alın."
           ssh -o StrictHostKeyChecking=no -p 443 -R0:localhost:3389 a.pinggy.io
-
