@@ -1,0 +1,28 @@
+name: Windows RDP (Pinggy)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 360 # 6 saat sürer
+    steps:
+      - name: RDP ve Kullanıcı Ayarları
+        run: |
+          # Yönetici şifresini belirle
+          net user administrator VdsPassword123!
+          
+          # RDP'yi etkinleştir
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          
+          # NLA (Network Level Authentication) devre dışı bırak (bağlantı hatasını önlemek için)
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 0
+
+      - name: Pinggy ile Tünel Başlat
+        run: |
+          echo "Pinggy tüneli başlatılıyor... Lütfen log kısmından adresi takip edin."
+          # Tüneli arka planda başlatmak için bir loop veya arka plan süreci kullanıyoruz
+          ssh -o StrictHostKeyChecking=no -p 443 -R0:localhost:3389 a.pinggy.io
+
