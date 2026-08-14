@@ -1,4 +1,4 @@
-name: Windows RDP (Pinggy)
+name: Windows RDP (Bore)
 
 on:
   workflow_dispatch:
@@ -10,16 +10,14 @@ jobs:
     steps:
       - name: RDP ve Kullanıcı Ayarları
         run: |
-          # Şifre kurallarına uyması için Admin1234! yapıldı
           net user runneradmin Admin1234!
-          
-          # RDP'yi etkinleştir
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-          
-          # NLA devre dışı bırak (bağlantı sorunlarını çözer)
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 0
 
-      - name: Pinggy ile Tünel Başlat
+      - name: Bore TCP Tüneli Başlat
         run: |
-          ssh -o StrictHostKeyChecking=no -p 443 -R0:localhost:3389 a.pinggy.io
+          Invoke-WebRequest -Uri "https://github.com/ekzhang/bore/releases/download/v0.4.1/bore-v0.4.1-x86_64-pc-windows-msvc.zip" -OutFile "bore.zip"
+          Expand-Archive bore.zip -DestinationPath .
+          echo "Bore tüneli başlatılıyor... Loglarda 'listening at bore.pub:PORT' yazısını bulacaksın."
+          .\bore.exe local 3389 --to bore.pub
