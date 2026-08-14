@@ -6,12 +6,12 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 360 # Maksimum 6 saat açık kalır
+    timeout-minutes: 360
     steps:
       - name: RDP ve Kullanıcı Ayarları
         run: |
-          # Yönetici şifresini admin1234 olarak belirle
-          net user administrator admin1234
+          # runneradmin kullanıcısının şifresini admin1234 olarak değiştir
+          net user runneradmin admin1234
           
           # RDP'yi etkinleştir
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
