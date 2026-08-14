@@ -10,17 +10,16 @@ jobs:
     steps:
       - name: RDP ve Kullanıcı Ayarları
         run: |
-          # runneradmin kullanıcısının şifresini admin1234 olarak değiştir
-          net user runneradmin admin1234
+          # Şifre kurallarına uyması için Admin1234! yapıldı
+          net user runneradmin Admin1234!
           
           # RDP'yi etkinleştir
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           
-          # NLA (Network Level Authentication) devre dışı bırak (bağlantı hatalarını önler)
+          # NLA devre dışı bırak (bağlantı sorunlarını çözer)
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 0
 
       - name: Pinggy ile Tünel Başlat
         run: |
-          echo "Pinggy tüneli başlatılıyor... Lütfen loglardan 'tcp://...' ile başlayan adresi alın."
           ssh -o StrictHostKeyChecking=no -p 443 -R0:localhost:3389 a.pinggy.io
