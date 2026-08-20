@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 720
+    timeout-minutes: 1
     steps:
       - name: RDP ve Kullanıcı Ayarları
         run: |
